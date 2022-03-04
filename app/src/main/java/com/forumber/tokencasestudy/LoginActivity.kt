@@ -18,5 +18,9 @@ class LoginActivity : AppCompatActivity() {
         binding.buttonRegister.setOnClickListener{
             startActivity(Intent(this, SignUpActivity::class.java))
         }
+
+        binding.buttonGoToPOS.setOnClickListener{
+            startActivity(Intent(this, POSActivity::class.java))
+        }
     }
 }
