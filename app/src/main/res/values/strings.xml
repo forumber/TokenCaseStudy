@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">TokenCaseStudy</string>
+    <string name="login">Login</string>
+    <string name="passwordHint">Password</string>
+    <string name="emailHint">Email</string>
+    <string name="loginButton">Login</string>
+    <string name="registerButton">Register</string>
+    <string name="titleRegister">Register</string>
+    <string name="you_are_logged_in_as">You are logged in as</string>
 </resources>
