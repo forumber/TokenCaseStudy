@@ -57,11 +57,12 @@ class QSYAPI {
             }
         }
 
-        fun sendRequest(message: String)
-        {
+        fun sendRequest(message: String): String? {
             ignoreSSL()
 
-            thread {
+            var output: String? = null
+
+            val t = Thread {
                 val serverURL = "https://sandbox-api.payosy.com/api/get_qr_sale"
                 val url = URL(serverURL)
                 val connection = url.openConnection() as HttpURLConnection
@@ -88,12 +89,14 @@ class QSYAPI {
 
                 val inputStream = DataInputStream(connection.inputStream)
                 val reader = BufferedReader(InputStreamReader(inputStream))
-                val output: String = reader.readLine()
+                output = reader.readLine()
 
                 println(output)
-
-
             }
+            t.start()
+            t.join()
+
+            return output
 
 
         }

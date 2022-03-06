@@ -1,9 +1,11 @@
 package com.forumber.tokencasestudy
 
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.forumber.tokencasestudy.databinding.ActivityLoginBinding
 import com.forumber.tokencasestudy.databinding.ActivityPosactivityBinding
+import kotlin.concurrent.thread
 
 class POSActivity : AppCompatActivity() {
 
@@ -16,7 +18,18 @@ class POSActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.buttonGenerateQRCode.setOnClickListener {
-            QSYAPI.sendRequest("{\"totalReceiptAmount\": 100}")
+            thread {
+                val returnContent =
+                    QSYAPI.sendRequest("{\"totalReceiptAmount\": ${binding.inputAmount.text}}")
+
+                if (returnContent != null) {
+                    val QRContent = QRCode.getQrContentFromJson(returnContent)
+                    if (QRContent != null) {
+                        val finalBitmap = QRCode.getQrCodeBitmap(QRContent)
+                        runOnUiThread { binding.imageQRCode.setImageBitmap(finalBitmap) }
+                    }
+                }
+            }
         }
     }
 }
