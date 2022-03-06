@@ -8,6 +8,15 @@
     android:gravity="center"
     tools:context=".ProfileActivity">
 
+
+    <TextView
+        android:id="@+id/labelLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/customer"
+        style="@style/TextAppearance.MaterialComponents.Headline4"/>
+
     <Button
         android:id="@+id/buttonGoToPOS"
         android:layout_width="match_parent"

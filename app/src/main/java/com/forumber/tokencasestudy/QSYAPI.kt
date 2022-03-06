@@ -2,7 +2,9 @@ package com.forumber.tokencasestudy
 
 import android.annotation.SuppressLint
 import com.beust.klaxon.Json
+import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
+import com.beust.klaxon.Parser
 import java.io.BufferedReader
 import java.io.DataInputStream
 import java.io.DataOutputStream
@@ -23,7 +25,7 @@ import kotlin.concurrent.thread
 
 class QSYAPI {
     companion object {
-        fun ignoreSSL()
+        private fun ignoreSSL()
         {
             val trustAllCerts: Array<TrustManager> =
                 arrayOf<TrustManager>(@SuppressLint("CustomX509TrustManager")
@@ -82,7 +84,7 @@ class QSYAPI {
             return newMap
         }
 
-        fun sendPaymentRequest(qrContent: String, transactionAmount: Int)
+        fun sendPaymentRequest(qrContent: String, transactionAmount: Int) : Boolean
         {
             val myObject =  object {
                 val returnCode = 1000
@@ -105,18 +107,32 @@ class QSYAPI {
                 val QRdata = qrContent
             }
 
-            sendRequest("https://sandbox-api.payosy.com/api/payment", Klaxon().toJsonString(myObject))
+            return try {
+                checkReturnCode(sendRequest("https://sandbox-api.payosy.com/api/payment", Klaxon().toJsonString(myObject)))
+            } catch (e: Exception) {
+                false
+            }
         }
 
-        fun sendQRRequest(amount: Int): String? {
+        fun sendQRRequest(amount: Int): String {
             val myObject =  object {
                 val totalReceiptAmount = amount
             }
 
-            return sendRequest("https://sandbox-api.payosy.com/api/get_qr_sale", Klaxon().toJsonString(myObject))
+            val returnedRequest = sendRequest("https://sandbox-api.payosy.com/api/get_qr_sale", Klaxon().toJsonString(myObject))
+
+            if (!checkReturnCode(returnedRequest))
+                throw Exception("FAIL")
+
+            return returnedRequest
         }
 
-        private fun sendRequest(URL: String, message: String): String? {
+        private fun checkReturnCode(content: String) : Boolean
+        {
+            return (Parser.default().parse(content.reader()) as JsonObject).int("returnCode") == 1000
+        }
+
+        private fun sendRequest(URL: String, message: String): String {
             ignoreSSL()
 
             var output: String? = null
@@ -155,14 +171,12 @@ class QSYAPI {
             t.start()
             t.join()
 
-            return output
+            return output!!
         }
 
         fun convertAmountToTL(transactionAmount: Int) : String
         {
-
             val theStringBuilder = StringBuilder(transactionAmount.toString())
-
             return theStringBuilder.insert(theStringBuilder.length-2, ".").append(" TL").toString()
         }
     }

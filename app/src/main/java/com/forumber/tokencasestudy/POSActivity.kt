@@ -1,6 +1,7 @@
 package com.forumber.tokencasestudy
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -8,14 +9,17 @@ import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.ActionBar
 import androidx.core.view.drawToBitmap
 import com.forumber.tokencasestudy.databinding.ActivityLoginBinding
 import com.forumber.tokencasestudy.databinding.ActivityPosactivityBinding
+import java.lang.Exception
 import kotlin.concurrent.thread
 
 class POSActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPosactivityBinding
+    private lateinit var actionBar: ActionBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,12 +27,15 @@ class POSActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+        actionBar = supportActionBar!!
+        actionBar.title = "POS"
+
         binding.buttonGenerateQRCode.setOnClickListener {
             thread {
-                val returnContent =
-                    QSYAPI.sendQRRequest(binding.inputAmount.text.toString().toInt())
+                try {
+                    val returnContent =
+                        QSYAPI.sendQRRequest(binding.inputAmount.text.toString().toInt())
 
-                if (returnContent != null) {
                     val QRContent = QRCode.getQrContentFromJson(returnContent)
                     if (QRContent != null) {
                         val finalBitmap = QRCode.getQrCodeBitmap(QRContent)
@@ -38,6 +45,14 @@ class POSActivity : AppCompatActivity() {
                         }
                         saveBitmap(finalBitmap)
                     }
+                } catch (e: Exception)
+                {
+                    runOnUiThread {AlertDialog.Builder(this)
+                        .setMessage("Error!")
+                        .setNeutralButton("OK") {dialog, which ->
+                            dialog.dismiss()
+                        }
+                        .create().show()}
                 }
             }
         }
@@ -45,7 +60,6 @@ class POSActivity : AppCompatActivity() {
         binding.buttonReadQROnCustomer.setOnClickListener {
             val intent = Intent().apply {
                 putExtra("qrimagelocation", "$filesDir/bitmap.jpg")
-                // Put your data here if you want.
             }
             setResult(Activity.RESULT_OK, intent)
             onBackPressed()

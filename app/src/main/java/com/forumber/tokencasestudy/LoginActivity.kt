@@ -12,7 +12,6 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private lateinit var actionBar: ActionBar
-    //private lateinit var progressDialog: ProgressDialog
     private lateinit var firebaseAuth: FirebaseAuth
 
 
@@ -31,8 +30,6 @@ class LoginActivity : AppCompatActivity() {
         binding.buttonRegister.setOnClickListener{
             startActivity(Intent(this, SignUpActivity::class.java))
         }
-
-
 
         binding.buttonLogin.setOnClickListener {
             firebaseLogin()

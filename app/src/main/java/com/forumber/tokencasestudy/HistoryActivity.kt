@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -44,19 +45,20 @@ class HistoryActivity : AppCompatActivity() {
         override fun getItemCount(): Int {
             return itemList.size
         }
-
-
     }
-
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var transactionList : ArrayList<Transaction>
     private lateinit var theAdapter : DataAdapter
     private lateinit var db : FirebaseFirestore
+    private lateinit var actionBar: ActionBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
+
+        actionBar = supportActionBar!!
+        actionBar.title = "History"
 
         recyclerView = findViewById(R.id.recyclerViewHistoryList)
         recyclerView.layoutManager = LinearLayoutManager(this)

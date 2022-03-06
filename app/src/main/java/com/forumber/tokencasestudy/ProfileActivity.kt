@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import com.forumber.tokencasestudy.databinding.ActivityProfileBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -16,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 class ProfileActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityProfileBinding
+    private lateinit var actionBar: ActionBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,13 +25,13 @@ class ProfileActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        binding.buttonGoToPOS.setOnClickListener{
+        actionBar = supportActionBar!!
+        actionBar.title = FirebaseAuth.getInstance().currentUser!!.email
 
+        binding.buttonGoToPOS.setOnClickListener{
             val intent = Intent(this, POSActivity::class.java)
             @Suppress("DEPRECATION")
             startActivityForResult(intent, 0)
-
-            //startActivity(Intent(this, POSActivity::class.java))
         }
 
         binding.buttonLogout.setOnClickListener {
@@ -47,7 +49,6 @@ class ProfileActivity : AppCompatActivity() {
         if (requestCode == 0) {
             if (resultCode == Activity.RESULT_OK) {
                 val QRImageLocation = data!!.getStringExtra("qrimagelocation")
-                Toast.makeText(this, QRImageLocation, Toast.LENGTH_SHORT).show()
 
                 receiveQR(QRImageLocation)
             }
@@ -80,7 +81,7 @@ class ProfileActivity : AppCompatActivity() {
 
         val builder: AlertDialog.Builder =
             AlertDialog.Builder(this)
-                .setMessage("Do you want to pay $transactionAmount kuruş?")
+                .setMessage("Do you want to pay ${QSYAPI.convertAmountToTL(transactionAmount)}?")
                 .setPositiveButton("Yes") {dialog, which ->
                     dialog.dismiss()
                     doPayment(qrCodeContent, transactionAmount)
@@ -92,10 +93,15 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun doPayment(qrCodeContent: String, transactionAmount: Int) {
-        QSYAPI.sendPaymentRequest(qrCodeContent, transactionAmount)
-        Database.addPayment(transactionAmount)
-
+        if (QSYAPI.sendPaymentRequest(qrCodeContent, transactionAmount))
+            Database.addPayment(transactionAmount)
+        else
+            AlertDialog.Builder(this)
+                .setMessage("Error!")
+                .setNeutralButton("OK") {dialog, which ->
+                dialog.dismiss()
+            }
+                .create().show()
     }
-
 
 }
