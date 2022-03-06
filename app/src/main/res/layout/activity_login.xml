@@ -15,16 +15,6 @@
         android:text="@string/login"
         style="@style/TextAppearance.MaterialComponents.Headline4"/>
 
-    <Button
-        android:id="@+id/buttonGoToPOS"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/inputEmailField"
-        android:layout_marginBottom="10dp"
-        android:text="@string/go_to_pos" />
-
-
-
     <!--Email Field-->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/inputEmailField"

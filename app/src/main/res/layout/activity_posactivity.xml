@@ -36,4 +36,12 @@
         android:layout_below="@+id/inputAmountField"
         android:text="@string/generate_qr_code"/>
 
+    <Button
+        android:id="@+id/buttonReadQROnCustomer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonGenerateQRCode"
+        android:text="@string/read_qr_on_customer_ui"
+        android:visibility="gone"/>
+
 </RelativeLayout>

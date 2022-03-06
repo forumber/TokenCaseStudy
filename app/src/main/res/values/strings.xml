@@ -10,4 +10,5 @@
     <string name="go_to_pos">Go To POS</string>
     <string name="amount">Amount</string>
     <string name="generate_qr_code">Generate QR Code</string>
+    <string name="read_qr_on_customer_ui">Read QR On Customer UI</string>
 </resources>

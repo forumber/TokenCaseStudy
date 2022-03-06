@@ -1,6 +1,8 @@
 package com.forumber.tokencasestudy
 
 import android.annotation.SuppressLint
+import com.beust.klaxon.Json
+import com.beust.klaxon.Klaxon
 import java.io.BufferedReader
 import java.io.DataInputStream
 import java.io.DataOutputStream
@@ -57,13 +59,70 @@ class QSYAPI {
             }
         }
 
-        fun sendRequest(message: String): String? {
+        fun getTransactionAmount(qrCodeContents: String) : Int
+        {
+            return (parseQrCodeContent(qrCodeContents)["54"] as String).toInt()
+        }
+
+        private fun parseQrCodeContent(qrCodeContents: String) : MutableMap<String, Any>
+        {
+            var qrCodeContentsTemp = qrCodeContents
+            val newMap= mutableMapOf<String, Any>()
+
+            while (qrCodeContentsTemp.isNotBlank())
+            {
+                val tag = qrCodeContentsTemp.substring(0..1)
+                val length = qrCodeContentsTemp.substring(2..3).toInt()
+                val content = qrCodeContentsTemp.substring(4..(3+length))
+
+                newMap.put(tag, content as Any)
+
+                qrCodeContentsTemp = qrCodeContentsTemp.substring(4+length)
+            }
+            return newMap
+        }
+
+        fun sendPaymentRequest(qrContent: String, transactionAmount: Int)
+        {
+            val myObject =  object {
+                val returnCode = 1000
+                val returnDesc = "success"
+                val receiptMsgCustomer = "beko Campaign/n2018"
+                val receiptMsgMerchant = "beko Campaign Merchant/n2018"
+                val paymentInfoList = arrayOf(
+                    object {
+                        val paymentProcessorID = 67
+                        val paymentActionList = arrayOf(
+                            object {
+                                val paymentType = 3
+                                val amount = transactionAmount
+                                val currencyID = 949
+                                val vatRate = 800
+                            }
+                        )
+                    }
+                )
+                val QRdata = qrContent
+            }
+
+            sendRequest("https://sandbox-api.payosy.com/api/payment", Klaxon().toJsonString(myObject))
+        }
+
+        fun sendQRRequest(amount: Int): String? {
+            val myObject =  object {
+                val totalReceiptAmount = amount
+            }
+
+            return sendRequest("https://sandbox-api.payosy.com/api/get_qr_sale", Klaxon().toJsonString(myObject))
+        }
+
+        private fun sendRequest(URL: String, message: String): String? {
             ignoreSSL()
 
             var output: String? = null
 
             val t = Thread {
-                val serverURL = "https://sandbox-api.payosy.com/api/get_qr_sale"
+                val serverURL = URL
                 val url = URL(serverURL)
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "POST"
@@ -97,8 +156,6 @@ class QSYAPI {
             t.join()
 
             return output
-
-
         }
     }
 }

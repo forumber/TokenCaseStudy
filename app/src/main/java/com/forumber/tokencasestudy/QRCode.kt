@@ -3,14 +3,31 @@ package com.forumber.tokencasestudy
 import android.graphics.Bitmap
 import android.graphics.Color
 import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Klaxon
 import com.beust.klaxon.Parser
 import com.google.zxing.BarcodeFormat
-import com.google.zxing.EncodeHintType
+import com.google.zxing.BinaryBitmap
+import com.google.zxing.LuminanceSource
+import com.google.zxing.RGBLuminanceSource
+import com.google.zxing.common.HybridBinarizer
+import com.google.zxing.qrcode.QRCodeReader
 import com.google.zxing.qrcode.QRCodeWriter
+
 
 class QRCode {
     companion object {
+
+        private fun bitmapToBinaryBitmap(bMap: Bitmap): BinaryBitmap {
+            val intArray = IntArray(bMap.width * bMap.height)
+            bMap.getPixels(intArray, 0, bMap.width, 0, 0, bMap.width, bMap.height)
+
+            val source: LuminanceSource =
+                RGBLuminanceSource(bMap.width, bMap.height, intArray)
+            return BinaryBitmap(HybridBinarizer(source))
+        }
+
+        fun readQrCode(qrCodeBitmap: Bitmap): String {
+            return QRCodeReader().decode(bitmapToBinaryBitmap(qrCodeBitmap)).text
+        }
 
         fun getQrContentFromJson(content:String): String? {
             val parser: Parser = Parser.default()
