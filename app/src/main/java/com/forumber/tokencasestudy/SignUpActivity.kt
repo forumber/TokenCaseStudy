@@ -30,6 +30,7 @@ class SignUpActivity : AppCompatActivity() {
         binding.buttonRegister.setOnClickListener {
             firebaseAuth.createUserWithEmailAndPassword(binding.inputEmail.text.toString(), binding.inputPassword.text.toString())
                 .addOnSuccessListener {
+                    Database.registerUser(binding.inputEmail.text.toString())
                     startActivity(Intent(this, ProfileActivity::class.java))
                     finish()
                 }

@@ -11,4 +11,6 @@
     <string name="amount">Amount</string>
     <string name="generate_qr_code">Generate QR Code</string>
     <string name="read_qr_on_customer_ui">Read QR On Customer UI</string>
+    <string name="logout">Logout</string>
+    <string name="history">History</string>
 </resources>

@@ -157,5 +157,13 @@ class QSYAPI {
 
             return output
         }
+
+        fun convertAmountToTL(transactionAmount: Int) : String
+        {
+
+            val theStringBuilder = StringBuilder(transactionAmount.toString())
+
+            return theStringBuilder.insert(theStringBuilder.length-2, ".").append(" TL").toString()
+        }
     }
 }

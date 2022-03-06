@@ -15,4 +15,18 @@
         android:layout_centerInParent="true"
         android:text="@string/go_to_pos" />
 
+    <Button
+        android:id="@+id/buttonHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/history"
+        android:layout_above="@+id/buttonGoToPOS"/>
+
+    <Button
+        android:id="@+id/buttonLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/logout"
+        android:layout_below="@+id/buttonGoToPOS"/>
+
 </RelativeLayout>

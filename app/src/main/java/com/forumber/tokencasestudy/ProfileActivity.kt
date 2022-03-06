@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.forumber.tokencasestudy.databinding.ActivityProfileBinding
+import com.google.firebase.auth.FirebaseAuth
 
 
 class ProfileActivity : AppCompatActivity() {
@@ -29,6 +30,16 @@ class ProfileActivity : AppCompatActivity() {
             startActivityForResult(intent, 0)
 
             //startActivity(Intent(this, POSActivity::class.java))
+        }
+
+        binding.buttonLogout.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+
+        binding.buttonHistory.setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java))
         }
     }
 
@@ -82,6 +93,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun doPayment(qrCodeContent: String, transactionAmount: Int) {
         QSYAPI.sendPaymentRequest(qrCodeContent, transactionAmount)
+        Database.addPayment(transactionAmount)
 
     }
 
